@@ -1,0 +1,5 @@
+{
+  "name": "BookFlow SL",
+  "description": "A bilingual, offline-capable PWA connecting Sri Lankan students affected by floods with book donors. Features real-time matching, progress tracking, and interactive flood-relief mapping.",
+  "requestFramePermissions": []
+}

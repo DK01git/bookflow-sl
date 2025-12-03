@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donate Books, Rebuild Futures</title>
+    <meta name="description" content="Connecting Sri Lankan students with book donors." />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Sinhala & English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'Noto Sans Sinhala', 'sans-serif'],
+              sinhala: ['Noto Sans Sinhala', 'sans-serif'],
+            },
+            colors: {
+              teal: {
+                50: '#f0fdfa',
+                100: '#ccfbf1',
+                500: '#14b8a6',
+                600: '#0d9488',
+                700: '#0f766e',
+                900: '#134e4a',
+              },
+              sky: {
+                50: '#f0f9ff',
+                500: '#0ea5e9',
+                900: '#0c4a6e',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+      }
+      /* Custom scrollbar for better aesthetics */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js",
+    "firebase/analytics": "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-gray-900 transition-colors duration-200">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
