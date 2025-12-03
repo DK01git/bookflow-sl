@@ -1,4 +1,3 @@
-
 import { BookCategory, BookRequest, UrgencyLevel, SRI_LANKA_DISTRICTS } from './types';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -51,7 +50,6 @@ export const TRANSLATIONS = {
     formSchool: "School / Location",
     formDetails: "Specific books needed (e.g., 'Grade 5 Math text')",
     filterAll: "All Districts",
-    // New Translations
     filterGrade: "All Grades",
     filterUrgentOnly: "Flood Victims Only",
     daysAgo: "days ago",
@@ -74,12 +72,12 @@ export const TRANSLATIONS = {
   },
   si: {
     heroTitle: "පුස්තකාල යළි ගොඩනගමු, අනාගතය දිනවමු",
-    heroSubtitle: "ගංවතුරෙන් පීඩාවට පත් දරුවන්ට පොත්පත් ලබාදීමට එකතු වන්න.",
+    heroSubtitle: "ගංවතුරෙන් පීඩාවට පත් දරුවන්ට පොත්පත් ලබාදීමට එක්වන්න.",
     btnRequest: "පොත් අවශ්‍යයි",
-    btnDonate: "උදව් කරන්න",
+    btnDonate: "පරිත්‍යාග කරන්න",
     navHome: "මුල් පිටුව",
     navRequests: "ඉල්ලීම්",
-    navDashboard: "මගේ දත්ත",
+    navDashboard: "මගේ පුවරුව",
     step: "පියවර",
     next: "ඊළඟ",
     submit: "ඉල්ලීම යවන්න",
@@ -88,10 +86,10 @@ export const TRANSLATIONS = {
     district: "දිස්ත්‍රික්කය",
     grade: "ශ්‍රේණිය",
     category: "වර්ගය",
-    urgency: "අවශ්‍යතාවය",
+    urgency: "හදිසි බව",
     contact: "දුරකථන අංකය",
     searchPlaceholder: "පාසල හෝ දිස්ත්‍රික්කය සොයන්න...",
-    statsBooks: "ඉල්ලීම්",
+    statsBooks: "මුළු ඉල්ලීම්",
     statsDonors: "පරිත්‍යාගශීලීන්",
     statsFulfilled: "සම්පූර්ණ කළ ඉල්ලීම්",
     urgentBadge: "ගංවතුරෙන් පීඩිත",
@@ -101,12 +99,11 @@ export const TRANSLATIONS = {
     formSchool: "පාසල / ප්‍රදේශය",
     formDetails: "අවශ්‍ය පොත් මොනවාද?",
     filterAll: "සියලුම දිස්ත්‍රික්ක",
-    // New Translations
     filterGrade: "සියලුම ශ්‍රේණි",
     filterUrgentOnly: "ගංවතුරෙන් පීඩිත අය පමණයි",
     daysAgo: "දිනවලට පෙර",
     justNow: "දැන්",
-    donorModalTitle: "ඔබගේ කාරුණිකත්වයට ස්තූතියි!",
+    donorModalTitle: "ඔබගේ දායකත්වයට ස්තූතියි!",
     donorModalSubtitle: "කරුණාකර පහත විස්තර තහවුරු කරන්න:",
     labelSupplyType: "මට ලබා දිය හැක්කේ:",
     supplyFull: "සියල්ලම",
@@ -119,7 +116,7 @@ export const TRANSLATIONS = {
     cancel: "අවලංගු කරන්න",
     confirmRedirect: "ඔබව WhatsApp වෙත යොමු කරනු ඇත. ඉදිරියට යන්නද?",
     statusPending: "බලාපොරොත්තුවෙන්",
-    statusPartial: "කොටසක් ලැබී ඇත",
+    statusPartial: "අර්ධ වශයෙන් සම්පූර්ණයි",
     statusFulfilled: "සම්පූර්ණයි",
   }
 };
