@@ -30,24 +30,24 @@ const DISTRICT_COORDS: Record<string, { x: number; y: number }> = {
 };
 
 interface SLMapProps {
-  highlightDistricts: string[];
+  requestCounts: Record<string, number>;
   onDistrictClick?: (district: string) => void;
 }
 
-export const SLMap: React.FC<SLMapProps> = ({ highlightDistricts, onDistrictClick }) => {
+export const SLMap: React.FC<SLMapProps> = ({ requestCounts, onDistrictClick }) => {
   return (
     <div className="relative w-full h-96 bg-blue-50/50 rounded-3xl overflow-hidden shadow-inner border border-blue-100 flex items-center justify-center">
       <div className="absolute top-4 left-4 z-10">
         <div className="flex items-center gap-2 mb-2">
-           <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
-           <span className="text-xs font-semibold text-gray-600">High Demand</span>
+          <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+          <span className="text-xs font-semibold text-gray-600">High Demand</span>
         </div>
         <div className="flex items-center gap-2">
-           <span className="w-3 h-3 rounded-full bg-teal-500"></span>
-           <span className="text-xs font-semibold text-gray-600">Requests Active</span>
+          <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+          <span className="text-xs font-semibold text-gray-600">Requests Active</span>
         </div>
       </div>
-      
+
       {/* Simplified Abstract SVG Map Shape */}
       <svg viewBox="0 0 100 100" className="h-full w-auto drop-shadow-xl" style={{ filter: 'drop-shadow(0px 10px 15px rgba(0,0,0,0.1))' }}>
         <path
@@ -59,29 +59,38 @@ export const SLMap: React.FC<SLMapProps> = ({ highlightDistricts, onDistrictClic
         />
         {/* Render District Dots */}
         {Object.entries(DISTRICT_COORDS).map(([name, coords]) => {
-          const isHighlighted = highlightDistricts.includes(name);
+          const count = requestCounts[name] || 0;
+          const isHighlighted = count > 0;
           const isFloodArea = ['Colombo', 'Galle', 'Matara', 'Kalutara', 'Ratnapura'].includes(name);
-          
+
           return (
             <g key={name} onClick={() => onDistrictClick && onDistrictClick(name)} className="cursor-pointer group">
               {isHighlighted && (
                 <circle cx={coords.x} cy={coords.y} r="6" fill={isFloodArea ? "#ef4444" : "#14b8a6"} opacity="0.2" className="animate-ping" />
               )}
-              <circle 
-                cx={coords.x} 
-                cy={coords.y} 
-                r={isHighlighted ? 2.5 : 1.5} 
+              <circle
+                cx={coords.x}
+                cy={coords.y}
+                r={isHighlighted ? 2.5 : 1.5}
                 fill={isHighlighted ? (isFloodArea ? "#ef4444" : "#0d9488") : "#94a3b8"}
                 className="transition-all duration-300 group-hover:r-3"
               />
-              <text 
-                x={coords.x} 
-                y={coords.y - 4} 
-                fontSize="3" 
-                textAnchor="middle" 
-                className={`pointer-events-none fill-slate-700 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white`}
+              {/* Tooltip Label */}
+              <text
+                x={coords.x}
+                y={coords.y - 5}
+                fontSize="3.5"
+                textAnchor="middle"
+                className={`pointer-events-none font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 fill-slate-800`}
+                style={{
+                  paintOrder: 'stroke',
+                  stroke: 'rgba(255,255,255,0.9)',
+                  strokeWidth: '2px',
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round'
+                }}
               >
-                {name}
+                {name} {count > 0 ? `(${count})` : ''}
               </text>
             </g>
           );
