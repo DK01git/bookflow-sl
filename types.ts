@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'si';
 
 export enum BookCategory {
@@ -16,6 +17,12 @@ export enum UrgencyLevel {
   CRITICAL = 'Critical - Flood Victim',
 }
 
+export interface DonorContribution {
+  donorName: string;
+  supplyType: 'full' | 'partial';
+  timestamp: number;
+}
+
 export interface BookRequest {
   id: string;
   studentName: string;
@@ -26,10 +33,12 @@ export interface BookRequest {
   details: string;
   urgency: UrgencyLevel;
   contactNumber: string;
-  status: 'Pending' | 'Matched' | 'Fulfilled';
+  status: 'Pending' | 'Partially Fulfilled' | 'Matched' | 'Fulfilled';
   timestamp: number;
+  // Deprecated single donor fields kept for backward compatibility if needed, 
+  // but we prefer the array below.
   donorId?: string;
-  donorMessage?: string;
+  donors?: DonorContribution[];
 }
 
 export interface Donor {

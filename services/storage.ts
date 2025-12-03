@@ -1,6 +1,7 @@
-import { BookRequest } from '../types';
+
+import { BookRequest, DonorContribution } from '../types';
 import { db, SAMPLE_REQUESTS } from '../constants';
-import { collection, getDocs, setDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc, updateDoc, query, orderBy, arrayUnion } from 'firebase/firestore';
 
 const COLLECTION = 'requests';
 const DONOR_KEY = 'bookflow_user_donations';
@@ -9,7 +10,7 @@ export const getRequests = async (): Promise<BookRequest[]> => {
   try {
     const q = query(collection(db, COLLECTION), orderBy('timestamp', 'desc'));
     const snapshot = await getDocs(q);
-    
+
     if (snapshot.empty) {
       // If DB is empty (first run), return samples but don't save them to DB to avoid spamming
       return SAMPLE_REQUESTS;
@@ -32,12 +33,18 @@ export const saveRequest = async (request: BookRequest): Promise<void> => {
   }
 };
 
-export const updateRequestStatus = async (id: string, status: BookRequest['status'], donorId?: string): Promise<void> => {
+export const updateRequestStatus = async (
+  id: string,
+  status: BookRequest['status'],
+  donorDetails: DonorContribution
+): Promise<void> => {
   try {
     const requestRef = doc(db, COLLECTION, id);
-    await updateDoc(requestRef, { 
-      status, 
-      donorId: donorId || 'anonymous' 
+
+    // We update the status AND append the new donor to the list
+    await updateDoc(requestRef, {
+      status,
+      donors: arrayUnion(donorDetails)
     });
   } catch (error) {
     console.error("Error updating status:", error);

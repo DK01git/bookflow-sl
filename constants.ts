@@ -1,3 +1,4 @@
+
 import { BookCategory, BookRequest, UrgencyLevel, SRI_LANKA_DISTRICTS } from './types';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -67,6 +68,9 @@ export const TRANSLATIONS = {
     btnConfirmDonate: "Confirm & Connect on WhatsApp",
     cancel: "Cancel",
     confirmRedirect: "You are about to be redirected to WhatsApp to connect with the student. Proceed?",
+    statusPending: "Pending",
+    statusPartial: "Partially Fulfilled",
+    statusFulfilled: "Fulfilled",
   },
   si: {
     heroTitle: "පුස්තකාල යළි ගොඩනගමු, අනාගතය දිනවමු",
@@ -114,6 +118,9 @@ export const TRANSLATIONS = {
     btnConfirmDonate: "තහවුරු කර WhatsApp වෙත යන්න",
     cancel: "අවලංගු කරන්න",
     confirmRedirect: "ඔබව WhatsApp වෙත යොමු කරනු ඇත. ඉදිරියට යන්නද?",
+    statusPending: "බලාපොරොත්තුවෙන්",
+    statusPartial: "කොටසක් ලැබී ඇත",
+    statusFulfilled: "සම්පූර්ණයි",
   }
 };
 

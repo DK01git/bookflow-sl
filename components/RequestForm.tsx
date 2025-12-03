@@ -33,9 +33,34 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
     }
   };
 
+  // Validation logic for each step
+  const canProceed = (): boolean => {
+    switch (step) {
+      case 1:
+        // Step 1: Grade must be selected
+        return !!formData.grade;
+      case 2:
+        // Step 2: At least one category must be selected
+        const hasCategories = formData.categories && formData.categories.length > 0;
+        if (!hasCategories) return false;
+
+        // If "Other" is selected, details must be provided
+        const hasOther = formData.categories?.includes(BookCategory.OTHER);
+        if (hasOther && (!formData.details || formData.details.trim() === '')) {
+          return false;
+        }
+        return true;
+      case 3:
+        // Step 3: District must be selected
+        return !!formData.district;
+      default:
+        return true;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!formData.studentName || !formData.contactNumber || !formData.district) return;
-    
+
     setIsSubmitting(true);
 
     const newRequest: BookRequest = {
@@ -66,9 +91,9 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
     <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
       {/* Progress Bar */}
       <div className="bg-gray-100 h-2 w-full">
-        <div 
-          className="bg-teal-500 h-full transition-all duration-500 ease-out" 
-          style={{ width: `${(step / 4) * 100}%` }} 
+        <div
+          className="bg-teal-500 h-full transition-all duration-500 ease-out"
+          style={{ width: `${(step / 4) * 100}%` }}
         />
       </div>
 
@@ -87,32 +112,31 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.grade}</label>
-              <select 
+              <select
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 value={formData.grade}
-                onChange={e => setFormData({...formData, grade: e.target.value})}
+                onChange={e => setFormData({ ...formData, grade: e.target.value })}
               >
                 <option value="">Select Grade</option>
                 {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
               </select>
             </div>
             <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">{t.urgency}</label>
-               <div className="flex gap-2">
-                 {[UrgencyLevel.MEDIUM, UrgencyLevel.HIGH, UrgencyLevel.CRITICAL].map(level => (
-                   <button
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.urgency}</label>
+              <div className="flex gap-2">
+                {[UrgencyLevel.MEDIUM, UrgencyLevel.HIGH, UrgencyLevel.CRITICAL].map(level => (
+                  <button
                     key={level}
-                    onClick={() => setFormData({...formData, urgency: level})}
-                    className={`flex-1 py-3 px-2 rounded-lg text-sm font-medium border transition-colors ${
-                      formData.urgency === level 
-                      ? (level === UrgencyLevel.CRITICAL ? 'bg-red-100 border-red-500 text-red-700' : 'bg-teal-100 border-teal-500 text-teal-700')
-                      : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-                    }`}
-                   >
-                     {level === UrgencyLevel.CRITICAL ? (lang === 'si' ? 'ගංවතුරෙන් පීඩිත (Urgent)' : 'Flood Victim (Urgent)') : level}
-                   </button>
-                 ))}
-               </div>
+                    onClick={() => setFormData({ ...formData, urgency: level })}
+                    className={`flex-1 py-3 px-2 rounded-lg text-sm font-medium border transition-colors ${formData.urgency === level
+                        ? (level === UrgencyLevel.CRITICAL ? 'bg-red-100 border-red-500 text-red-700' : 'bg-teal-100 border-teal-500 text-teal-700')
+                        : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                  >
+                    {level === UrgencyLevel.CRITICAL ? (lang === 'si' ? 'ගංවතුරෙන් පීඩිත (Urgent)' : 'Flood Victim (Urgent)') : level}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -122,14 +146,13 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
             <label className="block text-sm font-medium text-gray-700 mb-2">{t.category}</label>
             <div className="grid grid-cols-2 gap-3">
               {Object.values(BookCategory).map(cat => (
-                <div 
-                  key={cat} 
+                <div
+                  key={cat}
                   onClick={() => toggleCategory(cat)}
-                  className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-                    formData.categories?.includes(cat) 
-                    ? 'border-teal-500 bg-teal-50' 
-                    : 'border-gray-200 hover:border-teal-200'
-                  }`}
+                  className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${formData.categories?.includes(cat)
+                      ? 'border-teal-500 bg-teal-50'
+                      : 'border-gray-200 hover:border-teal-200'
+                    }`}
                 >
                   <span className="font-medium text-gray-700">{cat}</span>
                   {formData.categories?.includes(cat) && (
@@ -140,12 +163,12 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.formDetails}</label>
-              <textarea 
+              <textarea
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 rows={3}
                 placeholder={lang === 'en' ? "e.g., Grade 5 Sinhala reading book, Atlas..." : "උදා: 5 ශ්‍රේණියේ සිංහල කියවීමේ පොත..."}
                 value={formData.details}
-                onChange={e => setFormData({...formData, details: e.target.value})}
+                onChange={e => setFormData({ ...formData, details: e.target.value })}
               />
             </div>
           </div>
@@ -153,12 +176,12 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
 
         {step === 3 && (
           <div className="space-y-4">
-             <div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.district}</label>
-              <select 
+              <select
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 value={formData.district}
-                onChange={e => setFormData({...formData, district: e.target.value})}
+                onChange={e => setFormData({ ...formData, district: e.target.value })}
               >
                 <option value="">Select District</option>
                 {SRI_LANKA_DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -166,12 +189,12 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.formSchool}</label>
-              <input 
+              <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 placeholder="Vidyalaya..."
                 value={formData.school}
-                onChange={e => setFormData({...formData, school: e.target.value})}
+                onChange={e => setFormData({ ...formData, school: e.target.value })}
               />
             </div>
           </div>
@@ -181,21 +204,21 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.formName}</label>
-              <input 
+              <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 value={formData.studentName}
-                onChange={e => setFormData({...formData, studentName: e.target.value})}
+                onChange={e => setFormData({ ...formData, studentName: e.target.value })}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t.contact}</label>
-              <input 
+              <input
                 type="tel"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 placeholder="077xxxxxxx"
                 value={formData.contactNumber}
-                onChange={e => setFormData({...formData, contactNumber: e.target.value})}
+                onChange={e => setFormData({ ...formData, contactNumber: e.target.value })}
               />
             </div>
           </div>
@@ -203,16 +226,16 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
 
         <div className="mt-8 flex justify-between">
           {step > 1 ? (
-            <button 
-              onClick={handleBack} 
+            <button
+              onClick={handleBack}
               disabled={isSubmitting}
               className="px-6 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
             >
               {t.back}
             </button>
           ) : (
-            <button 
-              onClick={onCancel} 
+            <button
+              onClick={onCancel}
               disabled={isSubmitting}
               className="px-6 py-2 text-red-500 font-medium hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
             >
@@ -221,15 +244,19 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
           )}
 
           {step < 4 ? (
-            <button 
-              onClick={handleNext} 
-              className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-teal-200 transition-all transform hover:scale-105"
+            <button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className={`px-8 py-3 rounded-xl font-bold shadow-lg transition-all transform ${canProceed()
+                  ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-teal-200 hover:scale-105 cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                }`}
             >
               {t.next}
             </button>
           ) : (
-             <button 
-              onClick={handleSubmit} 
+            <button
+              onClick={handleSubmit}
               disabled={isSubmitting}
               className="bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
