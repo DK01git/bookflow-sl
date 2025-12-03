@@ -302,8 +302,8 @@ const App = () => {
                           WhatsApp <Send size={14} />
                         </a>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${req.status === 'Partially Fulfilled'
-                            ? 'bg-amber-50 text-amber-700 border-amber-200'
-                            : 'bg-teal-50 text-teal-700 border-teal-200'
+                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                          : 'bg-teal-50 text-teal-700 border-teal-200'
                           }`}>
                           {req.status}
                         </span>
@@ -377,7 +377,7 @@ const App = () => {
             <span className="text-gray-700">•</span>
             <a href="#" className="hover:text-white transition-colors">Contact Support</a>
           </div>
-          <p className="mt-8 text-xs text-gray-600">© 2024 BookFlow SL. Built with ❤️ for Sri Lanka.</p>
+          <p className="mt-8 text-xs text-gray-600">© 2025 BookFlow SL. Built with ❤️ for Sri Lanka.</p>
         </div>
       </footer>
     </div>
