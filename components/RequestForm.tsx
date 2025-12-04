@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
-import { BookCategory, GRADES, SRI_LANKA_DISTRICTS, UrgencyLevel, BookRequest } from '../types';
+import { BookCategory, GRADES, SRI_LANKA_DISTRICTS, UrgencyLevel, BookRequest, RequestItem } from '../types';
 import { TRANSLATIONS } from '../constants';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus, Minus } from 'lucide-react';
 
 // Simple ID generator fallback
 const generateId = () => 'req-' + Math.random().toString(36).substr(2, 9);
@@ -16,38 +17,58 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
   const t = TRANSLATIONS[lang];
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<Partial<BookRequest>>({
-    categories: [],
-    urgency: UrgencyLevel.MEDIUM,
-  });
+
+  // Form State
+  const [grade, setGrade] = useState('');
+  const [urgency, setUrgency] = useState<UrgencyLevel>(UrgencyLevel.MEDIUM);
+  const [selectedItems, setSelectedItems] = useState<RequestItem[]>([]);
+  const [details, setDetails] = useState('');
+  const [district, setDistrict] = useState('');
+  const [school, setSchool] = useState('');
+  const [studentName, setStudentName] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
 
   const handleNext = () => setStep(p => p + 1);
   const handleBack = () => setStep(p => p - 1);
 
-  const toggleCategory = (cat: BookCategory) => {
-    const current = formData.categories || [];
-    if (current.includes(cat)) {
-      setFormData({ ...formData, categories: current.filter(c => c !== cat) });
+  // Toggle category and manage quantity
+  const handleCategoryChange = (cat: BookCategory) => {
+    const exists = selectedItems.find(i => i.category === cat);
+    if (exists) {
+      // Remove if exists
+      setSelectedItems(prev => prev.filter(i => i.category !== cat));
     } else {
-      setFormData({ ...formData, categories: [...current, cat] });
+      // Add with default quantity 1
+      setSelectedItems(prev => [...prev, { category: cat, quantity: 1, fulfilledCount: 0 }]);
     }
   };
 
+  const updateQuantity = (cat: BookCategory, delta: number) => {
+    setSelectedItems(prev => prev.map(item => {
+      if (item.category === cat) {
+        const newQty = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    }));
+  };
+
   const handleSubmit = async () => {
-    if (!formData.studentName || !formData.contactNumber || !formData.district) return;
+    if (!studentName || !contactNumber || !district || selectedItems.length === 0) return;
 
     setIsSubmitting(true);
 
     const newRequest: BookRequest = {
       id: generateId(),
-      studentName: formData.studentName || '',
-      grade: formData.grade || GRADES[0],
-      school: formData.school || '',
-      district: formData.district || '',
-      categories: formData.categories || [],
-      details: formData.details || '',
-      urgency: formData.urgency || UrgencyLevel.MEDIUM,
-      contactNumber: formData.contactNumber || '',
+      studentName,
+      grade: grade || GRADES[0],
+      school,
+      district,
+      categories: selectedItems.map(i => i.category), // For backwards compat
+      items: selectedItems, // Detailed items
+      details,
+      urgency,
+      contactNumber,
       status: 'Pending',
       timestamp: Date.now(),
       donors: []
@@ -94,7 +115,7 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
             {step}
           </span>
           {step === 1 && (lang === 'en' ? "Who is this for?" : "මෙම ඉල්ලීම කා සඳහාද?")}
-          {step === 2 && (lang === 'en' ? "What do you need?" : "ඔබට අවශ්‍ය දේ")}
+          {step === 2 && (lang === 'en' ? "Select Items Needed" : "ඔබට අවශ්‍ය දේ")}
           {step === 3 && (lang === 'en' ? "Location Details" : "ස්ථානය")}
           {step === 4 && (lang === 'en' ? "Contact Info" : "සම්බන්ධතා තොරතුරු")}
         </h2>
@@ -106,8 +127,8 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.grade}</label>
                 <select
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition-shadow"
-                  value={formData.grade}
-                  onChange={e => setFormData({ ...formData, grade: e.target.value })}
+                  value={grade}
+                  onChange={e => setGrade(e.target.value)}
                 >
                   <option value="">Select Grade</option>
                   {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
@@ -119,10 +140,10 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                   {[UrgencyLevel.MEDIUM, UrgencyLevel.HIGH, UrgencyLevel.CRITICAL].map(level => (
                     <button
                       key={level}
-                      onClick={() => setFormData({ ...formData, urgency: level })}
-                      className={`flex-1 py-3 px-2 rounded-xl text-sm font-medium border transition-all transform hover:scale-[1.02] ${formData.urgency === level
-                        ? (level === UrgencyLevel.CRITICAL ? 'bg-red-100 border-red-500 text-red-700' : 'bg-teal-100 border-teal-500 text-teal-700')
-                        : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                      onClick={() => setUrgency(level)}
+                      className={`flex-1 py-3 px-2 rounded-xl text-sm font-medium border transition-all transform hover:scale-[1.02] ${urgency === level
+                          ? (level === UrgencyLevel.CRITICAL ? 'bg-red-100 border-red-500 text-red-700' : 'bg-teal-100 border-teal-500 text-teal-700')
+                          : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}
                     >
                       {level === UrgencyLevel.CRITICAL ? (lang === 'si' ? 'ගංවතුරෙන් පීඩිත (Urgent)' : 'Flood Victim (Urgent)') : level}
@@ -136,31 +157,57 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
               <label className="block text-sm font-medium text-gray-700 mb-2">{t.category}</label>
-              <div className="grid grid-cols-2 gap-3">
-                {Object.values(BookCategory).map(cat => (
-                  <div
-                    key={cat}
-                    onClick={() => toggleCategory(cat)}
-                    className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${formData.categories?.includes(cat)
-                      ? 'border-teal-500 bg-teal-50 shadow-sm'
-                      : 'border-gray-200 hover:border-teal-200 hover:bg-gray-50'
-                      }`}
-                  >
-                    <span className="font-medium text-gray-700">{cat}</span>
-                    {formData.categories?.includes(cat) && (
-                      <span className="text-teal-600 font-bold">✓</span>
-                    )}
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {Object.values(BookCategory).map(cat => {
+                  const selected = selectedItems.find(i => i.category === cat);
+                  return (
+                    <div
+                      key={cat}
+                      className={`p-4 rounded-xl border-2 transition-all ${selected
+                          ? 'border-teal-500 bg-teal-50 shadow-sm'
+                          : 'border-gray-200 hover:border-teal-200 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => handleCategoryChange(cat)}
+                      >
+                        <span className="font-medium text-gray-700">{cat}</span>
+                        {selected ? <span className="text-teal-600 font-bold">✓</span> : <span className="text-gray-300">+</span>}
+                      </div>
+
+                      {/* Quantity Control */}
+                      {selected && (
+                        <div className="mt-3 flex items-center justify-between bg-white rounded-lg p-1 border border-teal-200">
+                          <button
+                            onClick={() => updateQuantity(cat, -1)}
+                            className="p-1 text-teal-600 hover:bg-teal-100 rounded-md"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="text-sm font-bold text-gray-800">
+                            {selected.quantity} needed
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(cat, 1)}
+                            className="p-1 text-teal-600 hover:bg-teal-100 rounded-md"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.formDetails}</label>
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"
-                  rows={3}
-                  placeholder={lang === 'en' ? "e.g., Grade 5 Sinhala reading book, Atlas..." : "උදා: 5 ශ්‍රේණියේ සිංහල කියවීමේ පොත..."}
-                  value={formData.details}
-                  onChange={e => setFormData({ ...formData, details: e.target.value })}
+                  rows={2}
+                  placeholder={lang === 'en' ? "Specific titles (e.g., Grade 5 Sinhala Text)..." : "උදා: 5 ශ්‍රේණියේ සිංහල කියවීමේ පොත..."}
+                  value={details}
+                  onChange={e => setDetails(e.target.value)}
                 />
               </div>
             </div>
@@ -172,8 +219,8 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.district}</label>
                 <select
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"
-                  value={formData.district}
-                  onChange={e => setFormData({ ...formData, district: e.target.value })}
+                  value={district}
+                  onChange={e => setDistrict(e.target.value)}
                 >
                   <option value="">Select District</option>
                   {SRI_LANKA_DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -185,8 +232,8 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"
                   placeholder="Vidyalaya..."
-                  value={formData.school}
-                  onChange={e => setFormData({ ...formData, school: e.target.value })}
+                  value={school}
+                  onChange={e => setSchool(e.target.value)}
                 />
               </div>
             </div>
@@ -199,8 +246,8 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                 <input
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"
-                  value={formData.studentName}
-                  onChange={e => setFormData({ ...formData, studentName: e.target.value })}
+                  value={studentName}
+                  onChange={e => setStudentName(e.target.value)}
                 />
               </div>
               <div>
@@ -209,8 +256,8 @@ export const RequestForm: React.FC<RequestFormProps> = ({ lang, onSubmit, onCanc
                   type="tel"
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"
                   placeholder="077xxxxxxx"
-                  value={formData.contactNumber}
-                  onChange={e => setFormData({ ...formData, contactNumber: e.target.value })}
+                  value={contactNumber}
+                  onChange={e => setContactNumber(e.target.value)}
                 />
                 <p className="text-xs text-gray-500 mt-1">Donors will contact you via WhatsApp on this number.</p>
               </div>

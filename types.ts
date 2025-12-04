@@ -17,9 +17,21 @@ export enum UrgencyLevel {
   CRITICAL = 'Critical - Flood Victim',
 }
 
+export interface RequestItem {
+  category: BookCategory;
+  quantity: number;      // Total needed
+  fulfilledCount: number; // How many received so far
+}
+
+export interface DonatedItem {
+  category: BookCategory;
+  quantity: number;
+}
+
 export interface DonorContribution {
   donorName: string;
   supplyType: 'full' | 'partial';
+  items: DonatedItem[]; // Specific items donated
   timestamp: number;
 }
 
@@ -29,23 +41,31 @@ export interface BookRequest {
   grade: string;
   school: string;
   district: string;
+  // categories is kept for backward compatibility/search indexing, 
+  // but 'items' is the source of truth for quantities
   categories: BookCategory[];
+  items: RequestItem[];
   details: string;
   urgency: UrgencyLevel;
   contactNumber: string;
   status: 'Pending' | 'Partially Fulfilled' | 'Matched' | 'Fulfilled';
   timestamp: number;
-  // Deprecated single donor fields kept for backward compatibility if needed, 
-  // but we prefer the array below.
   donorId?: string;
   donors?: DonorContribution[];
 }
 
-export interface Donor {
+export interface LibraryBook {
   id: string;
-  name: string;
-  totalDonated: number;
-  badges: string[];
+  title: string;
+  author: string;
+  category: BookCategory;
+  description: string;
+  language: 'Sinhala' | 'Tamil' | 'English';
+  linkUrl: string;
+  coverUrl?: string;
+  uploadedBy: string;
+  downloads: number;
+  timestamp: number;
 }
 
 export interface AppState {
