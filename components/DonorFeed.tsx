@@ -105,7 +105,7 @@ export const DonorFeed: React.FC<DonorFeedProps> = ({ requests, lang, onDonate }
   const submitDonation = () => {
     if (selectedReq) {
       // Construct the list of donated items based on the plan
-      const finalItems: DonatedItem[] = Object.entries(donationPlan).map(([cat, qty]) => ({
+      const finalItems: DonatedItem[] = Object.entries(donationPlan).map(([cat, qty]: [string, number]) => ({
         category: cat as BookCategory,
         quantity: qty
       }));
@@ -198,8 +198,8 @@ export const DonorFeed: React.FC<DonorFeedProps> = ({ requests, lang, onDonate }
             <button
               onClick={() => setFilterUrgency(!filterUrgency)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${filterUrgency
-                  ? 'bg-red-100 text-red-700 ring-2 ring-red-500 ring-offset-1'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-red-100 text-red-700 ring-2 ring-red-500 ring-offset-1'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               <AlertCircle size={16} />
@@ -437,8 +437,8 @@ export const DonorFeed: React.FC<DonorFeedProps> = ({ requests, lang, onDonate }
                     <button
                       onClick={() => setShippingMethod('post')}
                       className={`p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${shippingMethod === 'post'
-                          ? 'border-teal-500 bg-teal-50 text-teal-700'
-                          : 'border-gray-200 text-gray-500 hover:border-teal-200'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-gray-200 text-gray-500 hover:border-teal-200'
                         }`}
                     >
                       <Truck size={24} />
@@ -447,8 +447,8 @@ export const DonorFeed: React.FC<DonorFeedProps> = ({ requests, lang, onDonate }
                     <button
                       onClick={() => setShippingMethod('person')}
                       className={`p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${shippingMethod === 'person'
-                          ? 'border-teal-500 bg-teal-50 text-teal-700'
-                          : 'border-gray-200 text-gray-500 hover:border-teal-200'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-gray-200 text-gray-500 hover:border-teal-200'
                         }`}
                     >
                       <MapPin size={24} />
@@ -465,8 +465,8 @@ export const DonorFeed: React.FC<DonorFeedProps> = ({ requests, lang, onDonate }
                 onClick={submitDonation}
                 disabled={!donorName || (!isDonatingAll && Object.keys(donationPlan).length === 0)}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 transition-all transform ${donorName && (isDonatingAll || Object.keys(donationPlan).length > 0)
-                    ? 'bg-green-500 hover:bg-green-600 hover:-translate-y-1'
-                    : 'bg-gray-300 cursor-not-allowed'
+                  ? 'bg-green-500 hover:bg-green-600 hover:-translate-y-1'
+                  : 'bg-gray-300 cursor-not-allowed'
                   }`}
               >
                 <div className="bg-white/20 p-1 rounded-full"><CheckCircle size={16} /></div>
